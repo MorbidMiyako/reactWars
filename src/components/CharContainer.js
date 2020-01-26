@@ -4,89 +4,103 @@ import axios from "axios";
 import { Button } from "reactstrap";
 
 export default function CharContain() {
-  const [chars, setChars] = useState([]);
-  const [next, setNext] = useState();
-  const [previous, setPrevious] = useState();
+  const [content, setContent] = useState([]);
   const [url, setUrl] = useState(`https://swapi.co/api/people`);
   const [loading, setLoading] = useState(true);
+  const [char, setChar] = useState(false)
 
-  // const page = (state, setState) => {
-  //   axios
-  //     .get(state)
-  //     .then(res => (setUrl(state), setState(res.data.state)))
-  //     .catch(err => console.log(err));
-  // };
-
-  const nextPage = () => {
+  const setCharUrl = (charUrl) => {
     setLoading(true);
-    axios
-      .get(next)
-      .then(res => (setUrl(next), setNext(res.data.next)))
-      // .then(() => setLoading(false))
-      .catch(err => console.log(err));
-  };
+    setChar(true);
+    setUrl(charUrl);
+  }
 
-  const prevPage = () => {
+  const setMainUrl = (mainUrl) => {
     setLoading(true);
-    axios
-      .get(previous)
-      .then(res => (setUrl(previous), setPrevious(res.data.previous)))
-
-      .catch(err => console.log(err));
-  };
+    setChar(false);
+    setUrl(mainUrl);
+  }
 
   useEffect(() => {
     axios
       .get(url)
       .then(
         res => (
-          setChars(res.data.results.map(item => item)),
-          setNext(res.data.next),
-          setPrevious(res.data.previous),
+          setContent(res.data),
           setLoading(false)
         )
       )
       .catch(err => console.log(err));
   }, [url]);
 
-  console.log(chars);
-  console.log("I'm res", next);
+  console.log(content);
   return (
     <>
       <div className="container">
         {loading ? (
           <Loading />
-        ) : (
+        ) : char ? (
           <div>
-            <Button
-              id="butt"
-              size="sm"
-              className={previous ? "active" : "notActive"}
-              disabled={!previous}
-              onClick={prevPage}
-            >
-              previous
-            </Button>
 
             <Button
               id="butt"
               size="sm"
-              disabled={!next}
-              className={next ? "active" : "notActive"}
-              onClick={nextPage}
+              onClick={() => { setMainUrl(`https://swapi.co/api/people`) }}
             >
-              next
+              back
             </Button>
 
-            {chars.map(char => (
-              <div className="card">
-                <h1>Name:{char.name}</h1>
-                <p>height:{char.height}</p>
-                <p>mass:{char.mass}</p>
-              </div>
-            ))}
+
+            <div className="card">
+              <h1> Name: {content.name}</h1>
+              <p>Height: {content.height}</p>
+              <p>Mass: {content.mass}</p>
+              <p>Hair color: {content.hair_color}</p>
+              <p>Skin color: {content.skin_color}</p>
+              <p>Eye color: {content.eye_color}</p>
+              <p>Birth year: {content.birth_year}</p>
+
+            </div>
+
           </div>
-        )}
+        ) : (
+              <div>
+                <Button
+                  id="butt"
+                  size="sm"
+                  className={content.previous ? "active" : "notActive"}
+                  disabled={!content.previous}
+                  onClick={() => { setMainUrl(content.previous) }}
+                >
+                  previous
+            </Button>
+
+                <Button
+                  id="butt"
+                  size="sm"
+                  disabled={!content.next}
+                  className={content.next ? "active" : "notActive"}
+                  onClick={() => { setMainUrl(content.next) }}
+                >
+                  next
+            </Button>
+
+                {content.results.map(char => (
+                  <div className="card">
+                    <h1>Name: {char.name}</h1>
+                    <p>height: {char.height}</p>
+                    <p>mass: {char.mass}</p>
+                    <Button
+                      id="butt"
+                      size="sm"
+                      onClick={() => { setCharUrl(char.url) }}
+                    >
+                      more info
+                  </Button>
+                  </div>
+                ))}
+              </div>
+            )}
       </div>
     </>
   );
