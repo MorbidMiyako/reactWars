@@ -45,9 +45,12 @@ export default function CharContain() {
             <Button
               id="butt"
               size="sm"
-              onClick={() => { setMainUrl(`https://swapi.co/api/people`) }}
+              onClick={() => {
+                setUrl(`https://swapi.co/api/people`)
+                setChar(false)
+              }}
             >
-              back
+              Back to mainPage
             </Button>
 
 
@@ -70,17 +73,23 @@ export default function CharContain() {
                   size="sm"
                   className={content.previous ? "active" : "notActive"}
                   disabled={!content.previous}
-                  onClick={() => { setMainUrl(content.previous) }}
+                  onClick={() => {
+                    setLoading(true);
+                    setUrl(content.previous);
+                  }}
                 >
                   previous
             </Button>
 
                 <Button
                   id="butt"
-                  size="sm"
+                  size="m"
                   disabled={!content.next}
                   className={content.next ? "active" : "notActive"}
-                  onClick={() => { setMainUrl(content.next) }}
+                  onClick={() => {
+                    setLoading(true);
+                    setUrl(content.next);
+                  }}
                 >
                   next
             </Button>
@@ -88,12 +97,17 @@ export default function CharContain() {
                 {content.results.map(char => (
                   <div className="card">
                     <h1>Name: {char.name}</h1>
-                    <p>height: {char.height}</p>
-                    <p>mass: {char.mass}</p>
+                    <p>Height: {char.height}</p>
+                    <p>Birth year: {char.birth_year}</p>
                     <Button
                       id="butt"
-                      size="sm"
-                      onClick={() => { setCharUrl(char.url) }}
+                      size="lg"
+                      block
+                      onClick={() => {
+                        setLoading(true);
+                        setChar(true);
+                        setUrl(content.next);
+                      }}
                     >
                       more info
                   </Button>
